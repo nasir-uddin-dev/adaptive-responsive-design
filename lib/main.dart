@@ -15,7 +15,7 @@ class FocusExampleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: Text("Focus Example"),),
-        body: FocusExample2(),
+        body: FocusAbleText(),
       ),
     );
   }

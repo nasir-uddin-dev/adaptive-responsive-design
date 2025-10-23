@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class FocusExample2 extends StatefulWidget {
-  const FocusExample2({super.key});
+class FocusAbleText extends StatefulWidget {
+  const FocusAbleText({super.key});
 
   @override
-  State<FocusExample2> createState() => _FocusExample2State();
+  State<FocusAbleText> createState() => _FocusAbleTextState();
 }
 
-class _FocusExample2State extends State<FocusExample2> {
+class _FocusAbleTextState extends State<FocusAbleText> {
 
 
   @override
