@@ -6,8 +6,8 @@ class OrderedButton<T> extends StatefulWidget {
   const OrderedButton({
     super.key,
     required this.name,
-    required this.canRequestFocus,
-    required this.autofocus,
+    this.canRequestFocus = true,
+    this.autofocus = false,
     required this.order,
   });
 
@@ -22,6 +22,34 @@ class OrderedButton<T> extends StatefulWidget {
 
 class _OrderedButtonState extends State<OrderedButton> {
   late FocusNode focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode = FocusNode(
+      debugLabel: widget.name,
+      canRequestFocus: widget.canRequestFocus,
+    );
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant OrderedButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    focusNode.canRequestFocus = widget.canRequestFocus;
+  }
+
+  void _handleOnPressed() {
+    focusNode.requestFocus();
+    debugPrint("Button ${widget.name} pressed");
+    debugDumpFocusTree();
+  }
+
   @override
   Widget build(BuildContext context) {
     final FocusOrder order = switch (widget.order) {
@@ -30,14 +58,33 @@ class _OrderedButtonState extends State<OrderedButton> {
     };
     return FocusTraversalOrder(
       order: order,
-      child: Padding(padding: const EdgeInsets.all(8),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
         child: OutlinedButton(
           focusNode: focusNode,
-            autofocus: widget.autofocus,
-            style: ButtonStyle(
-              overlayColor:
+          autofocus: widget.autofocus,
+          style: ButtonStyle(
+            overlayColor: WidgetStateProperty<Color?>.fromMap(
+              /// If neither of these states is active, the property will resolve
+              /// to null, deferring to the default overlay color.
+              {
+                WidgetState.focused: Colors.red,
+                WidgetState.hovered: Colors.blue,
+              },
             ),
-            onPressed: onPressed, child: child),
+            foregroundColor: WidgetStateProperty<Color?>.fromMap(
+              ///WidgetState.focused | WidgetState.hovered could be used instead
+              ///of separate map keys, but this setup allows setting the button
+              ///style to a constant value for improved efficiency.
+              {
+                WidgetState.focused: Colors.white,
+                WidgetState.hovered: Colors.white,
+              },
+            ),
+          ),
+          onPressed: () => _handleOnPressed(),
+          child: Text(widget.name),
+        ),
       ),
     );
   }
@@ -57,10 +104,65 @@ class _FocusTraversalGroupExampleState
   Widget build(BuildContext context) {
     return SafeArea(
       child: ColoredBox(
-        color: Colors.grey,
+        color: Colors.white,
         child: FocusTraversalGroup(
           policy: OrderedTraversalPolicy(),
-          child: Column(children: []),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ///A group that is ordered with a numerical order, from left to right.
+              FocusTraversalGroup(
+                policy: OrderedTraversalPolicy(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List<Widget>.generate(3, (int index) {
+                    return OrderedButton(
+                      name: 'num $index',
+
+                      ///Try this : change this to "3 - index" and see how the
+                      ///order changes.
+                      order: index,
+                    );
+                  }),
+                ),
+              ),
+
+              ///A group that is ordered with a lexical order, from right to left.
+              FocusTraversalGroup(
+                policy: OrderedTraversalPolicy(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List<Widget>.generate(3, (int index) {
+                    /// Order as "C", "B" "A"
+                    final String order = String.fromCharCode(
+                      'A'.codeUnitAt(0) + (2 - index),
+                    );
+                    return OrderedButton(name: 'String : $order', order: order);
+                  }),
+                ),
+              ),
+
+              ///A group that orders in widget order, regardless of what the order
+              ///is set to
+              FocusTraversalGroup(
+                ///Because this is NOT an OrderedTraversalPolicy, the assigned
+                ///order of these OrderedButtons is ignored, and they are traversed
+                ///in widget order. TRY THIS : chang this to "OrderedTraversalPolicy()"
+                ///and see that it now follows the numeric order set on them instead
+                ///of the widget order
+                policy: WidgetOrderTraversalPolicy(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List<Widget>.generate(3, (int index) {
+                    return OrderedButton<num>(
+                      name: "ignored num: ${3 - index}",
+                      order: 3 - index,
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
