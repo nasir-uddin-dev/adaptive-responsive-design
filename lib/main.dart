@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-import 'focus_traversal_group_example_app.dart';
+import 'focus_example_app.dart';
+
 
 void main() {
-  runApp(const FocusTraversalGroupExampleApp());
+  runApp(const FocusExampleApp());
 }
 
-class FocusTraversalGroupExampleApp extends StatelessWidget {
-  const FocusTraversalGroupExampleApp({super.key});
+class FocusExampleApp extends StatelessWidget {
+  const FocusExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FocusTraversalGroupExample(),
+      home: Scaffold(
+        appBar: AppBar(title: Text("Focus Example"),),
+        body: FocusExample(),
+      ),
     );
   }
 }
