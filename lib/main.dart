@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'focus_example_app.dart';
+import 'focus_example_app_2.dart';
 
 
 void main() {
@@ -15,7 +15,7 @@ class FocusExampleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: Text("Focus Example"),),
-        body: FocusExample(),
+        body: FocusExample2(),
       ),
     );
   }
