@@ -1,0 +1,9 @@
+//  Static
+static variables(class variables) are useful for class-wide state and constants.
+static variables aren't initialized until they're used
+
+// final and const
+If you never intend to change a variable, use final or const, either instead of var or in addition
+to a type. A final variable can be set only once, a const variable is compile-time constant.
+(const variables are implicitly final.)
+Note : Instance variables can be final but not const
